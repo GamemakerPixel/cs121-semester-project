@@ -9,8 +9,10 @@ public class UserName {
 
         String name = firstName + " " + lastName;
 
+        StringBuilder nameStringBuilder = new StringBuilder(name);
+
         JOptionPane.showMessageDialog(null, "Your name capitalized: " + name.toUpperCase() + "\n" +
                 "Your name in lower case: " + name.toLowerCase() + "\n" +
-                "Your name reversed: " + lastName + " " + firstName+ "\n");
+                "Your name reversed: " + nameStringBuilder.reverse() + "\n");
     }
 }
