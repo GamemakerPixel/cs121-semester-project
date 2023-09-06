@@ -1,4 +1,4 @@
-package weekTwo.scannerAndDialogueBox;
+package week2.scannerAndDialogueBox;
 
 import java.util.Scanner;
 

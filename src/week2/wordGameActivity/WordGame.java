@@ -1,4 +1,4 @@
-package weekTwo.wordGameActivity;
+package week2.wordGameActivity;
 
 import java.util.HashMap;
 import java.util.Scanner;
