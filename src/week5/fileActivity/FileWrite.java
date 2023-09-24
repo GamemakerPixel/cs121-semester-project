@@ -2,6 +2,8 @@ package fileActivity.week5;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.IOException;
+import java.io.FileWriter;
 
 public class FileWrite{
 
@@ -10,60 +12,80 @@ public class FileWrite{
   public static void main(String[] args) {
     ArrayList<String> headers = promptForHeaders();
 
-    ArrayList<ArrayList<Object>> data = promptForData(headers);
+    ArrayList<ArrayList<String>> data = promptForData(headers);
 
+    System.out.println(headers);
     System.out.println(data);
+
+    writeToFile(headers, data);
   }
 
   private static ArrayList<String> promptForHeaders(){
-    ArrayList<String> headers = new ArrayList<>();
-
     System.out.println("Enter a list of headers, then \"exit\" to move on.");
 
-    while(true){
-      String header = scanner.nextLine();
-
-      if (header.equals("exit")){
-        break;
-      }
-
-      headers.add(header); 
-    }
-  
-    return headers;
+    return readInputList();
   }
 
-  private static ArrayList<ArrayList<Object>> promptForData(ArrayList<String> headers){
-    ArrayList<ArrayList<Object>> data = new ArrayList<>();
+  private static ArrayList<ArrayList<String>> promptForData(ArrayList<String> headers){
+    ArrayList<ArrayList<String>> data = new ArrayList<>();
 
     for (String header : headers){
-      data.add(promptDatatype(header));
+      data.add(promptHeaderData(header));
     }
 
     return data;
   }
 
-  private static ArrayList<Object> promptDatatype(String header){
-    
-    while (true){
-      System.out.printf("Enter the datatype for the %s column. (i:int, d:double, s:String)", header);
+  private static ArrayList<String> promptHeaderData(String header){
+    System.out.printf("Enter data for the %s row, and \"exit\" to move on.\n", header);
 
-      String input = scanner.nextLine();
+    return readInputList();
 
-      switch(input){
-        case "i":
-          return new ArrayList<Integer>();
-          break;
-        case "d":
-          return new ArrayList<Double>();
-          break;
-        case "s":
-          return new ArrayList<String>();
-        default:
-          continue;
+
+  }
+
+  private static ArrayList<String> readInputList(){ 
+    ArrayList<String> list = new ArrayList<>();
+
+    while(true){
+      String element = scanner.nextLine();
+
+      if (element.equals("exit")){
+        break;
       }
+
+      list.add(element); 
+    }
+  
+    return list;
+  }  
+
+  private static void writeToFile(ArrayList<String> headers, ArrayList<ArrayList<String>> data){
+    try{
+      FileWriter writer = new FileWriter("written-file.txt");
+
+      writer.write(formatData(headers, data));
+      writer.close();
+    }
+    catch (IOException exception){
+      exception.printStackTrace();
+    }
+  }
+
+  private static String formatData(ArrayList<String> headers, ArrayList<ArrayList<String>> data){
+    String formattedData = "";
+
+    for (int headerIndex = 0; headerIndex < headers.size(); headerIndex++){
+      formattedData += headers.get(headerIndex) + ":";
+
+      for (String dataElement: data.get(headerIndex)){
+        formattedData += dataElement + ",";
+      }
+
+      formattedData += "\n";
     }
 
-    
+    return formattedData;
   }
+
 }
