@@ -3,14 +3,13 @@ package characterbattle;
 import java.util.Scanner;
 
 public class Game{
-  private enum MenuOption {PLAY, LEADERBOARD, EXIT}
+  private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
+  private enum PlayerSelectOption {NEW, LOAD}
 
   private static final boolean DEBUG = true;
   
   private static Scanner scanner = new Scanner(System.in);
   
-  //private static Player[] players = new Player[2];
-
   public static void main(String[] args) {
     while (true){
       switch (showMainMenu()){
@@ -33,7 +32,7 @@ public class Game{
     System.out.println("DEBUG: " + message);
   }
 
-  private static MenuOption showMainMenu(){
+  private static MainMenuOption showMainMenu(){
     String[] options = {
       "Play",
       "Leaderboard",
@@ -42,7 +41,7 @@ public class Game{
 
     System.out.println("Welcome to Bit Bash!");
 
-    return MenuOption.values()[showMenu(options)];
+    return MainMenuOption.values()[showMenu(options)];
   }
 
   private static int showMenu(String[] options){
@@ -66,13 +65,36 @@ public class Game{
     }
   }
 
-
+  //Maintains control over game while playing
   private static void play(){
-    
+    Player[] players = new Player[2];
+
+    players[0] = selectPlayer(1);
+    players[1] = selectPlayer(2);
+
+    System.out.println(players);
   }
 
-  /*private static Player selectPlayer(int number){
+  private static Player selectPlayer(int number){
+    String[] options = {
+      "New",
+      "Load",
+    };
+
     System.out.printf("\nWho is player %d?\n", number);
     
-  }*/
+    PlayerSelectOption option = PlayerSelectOption.values()[showMenu(options)];
+
+    switch (option){
+      case NEW:
+        break;
+      case LOAD:
+        break;
+    }
+  }
+
+  private static Player createNewPlayer(){
+
+  }
+  
 }
