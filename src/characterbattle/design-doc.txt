@@ -1,0 +1,45 @@
+Project Requirements
+  Two Players
+  Turn Based
+  Player defined stats
+    Character Name
+    Hit Points
+    Attack Speed
+      Determines who strikes first
+    Move Damage
+  Round ends when one player's hit points are exhausted
+    State the round winner
+    Give winner a win point
+
+Additional Ideas
+  Limit stat points
+    Diminishing returns
+  Give players a name as well
+  Save Game for each player
+  Extra Stats
+    Defense
+    Critical Strike Power
+    Critical Strike Chance
+  Multiple Attack Options
+    Increasing points to define each
+  Attack Stats
+    Base Damage
+    Speed
+    Life Steal
+
+The Plan
+  Classes
+    Player
+    Character
+    AttackMove
+    Game (static, main)
+  Save Game
+    Save and load by players
+      Unlimited character creation
+        Limited team for rounds
+      Limited move creation (probably 3)
+
+      Uses JSON stored in savedplayers directory
+
+
+
