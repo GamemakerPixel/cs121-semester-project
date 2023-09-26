@@ -14,19 +14,27 @@ public class Rectangle{
     updateCalculations();
   }
 
-  public setLength(double length){
+  public void setLength(double length){
     this.length = length;
     updateCalculations();
   }
   
-  public setWidth(double width){
+  public void setWidth(double width){
     this.width = width;
     updateCalculations();
   }
 
-  public summarizeCalculations
+  public void summarizeCalculations(){
+    System.out.printf(
+        "Length: %.2f\n" +
+        "Width: %.2f\n" +
+        "Perimeter: %.2f\n" +
+        "Area: %.2f\n",
+        length, width, perimeter, area
+    );
+  }
 
-  private updateCalculations(){
+  private void updateCalculations(){
     area = length * width;
     perimeter = 2 * length + 2 * width;
   }
