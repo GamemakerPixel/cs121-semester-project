@@ -1,3 +1,0 @@
-course:c121,c124,h105,
-grade:A,B,A-,
-hours:3,4,4,

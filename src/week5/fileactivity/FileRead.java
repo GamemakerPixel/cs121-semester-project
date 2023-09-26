@@ -1,4 +1,4 @@
-package week5.fileActivity;
+package week5.fileactivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
