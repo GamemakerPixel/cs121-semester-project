@@ -73,8 +73,10 @@ public class Game{
     players[0] = selectPlayer(1);
     players[1] = selectPlayer(2);
 
-    System.out.println(players[0]);
-    System.out.println(players[1]);
+    int rounds = promptForRounds();
+
+    printPlayerBanner(player)
+
   }
 
   private static Player selectPlayer(int number){
@@ -105,5 +107,26 @@ public class Game{
 
     return new Player(name);
   }
+
+  private static int promptForRounds(){
+    int rounds;
+
+    while(true){
+      try{
+        System.out.println("\nEnter the number of rounds in the tournament (must be odd):");
+        rounds = Integer.parseInt(scanner.nextLine());
+
+        if (rounds % 2 == 0){
+          break;
+        }
+      }
+      catch (NumberFormatException exception){
+        continue;
+      }
+    }
+    
+    return rounds;
+  }
+
   
 }

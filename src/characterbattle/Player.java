@@ -36,6 +36,10 @@ public class Player{
     return getName();
   }
 
+  public void printBanner(){
+    System.out.println("\n- - - - - " + name + " - - - - -");
+  }
+
   /*
   //Used to determine leaderboard ranking (Ex. 4/5 ~= 6/10 ~= 9/20)
   public double getRankableScore(){
