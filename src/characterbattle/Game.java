@@ -15,6 +15,7 @@ public class Game{
       switch (showMainMenu()){
         case PLAY:
           debugMessage("Playing game...");
+          play();
           break;
         case LEADERBOARD:
           debugMessage("Showing leaderboard...");
@@ -87,14 +88,21 @@ public class Game{
 
     switch (option){
       case NEW:
-        break;
+        return createNewPlayer();
       case LOAD:
-        break;
+        //TODO: Loading players from file
+        return new Player("LOADED_PLAYER");
     }
+  
+    //Unreachable
+    return null;
   }
 
   private static Player createNewPlayer(){
+    System.out.println("Name your player:");
+    String name = scanner.nextLine();
 
+    return new Player(name);
   }
   
 }
