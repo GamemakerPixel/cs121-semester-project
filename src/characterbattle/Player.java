@@ -32,6 +32,10 @@ public class Player{
     return name;
   }
 
+  public String toString(){
+    return getName();
+  }
+
   /*
   //Used to determine leaderboard ranking (Ex. 4/5 ~= 6/10 ~= 9/20)
   public double getRankableScore(){

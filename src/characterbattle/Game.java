@@ -73,7 +73,8 @@ public class Game{
     players[0] = selectPlayer(1);
     players[1] = selectPlayer(2);
 
-    System.out.println(players);
+    System.out.println(players[0]);
+    System.out.println(players[1]);
   }
 
   private static Player selectPlayer(int number){
