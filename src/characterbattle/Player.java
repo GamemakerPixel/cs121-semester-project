@@ -3,6 +3,8 @@ package characterbattle;
 
 
 public class Player{
+  public static final int TEAM_SIZE = 2;
+
   //protected static int lastId = 0;
   //protected int id;
   protected String name;
@@ -12,6 +14,8 @@ public class Player{
   protected int totalTournaments;
   protected int totalWonTournaments;
   */
+
+  protected Character[] team;
 
   //Name must be 16 characters or less
   public Player(String name){
@@ -28,16 +32,23 @@ public class Player{
 
   }*/
 
+  public void setTeam(Character[] team) throws IllegalArgumentException{
+    if (team.length != TEAM_SIZE){
+      throw new IllegalArgumentException(String.format(
+            "Team size %d does not match required size (%d).",
+            team.length, TEAM_SIZE
+            ));
+    }
+
+    this.team = team;
+  }
+
   public String getName(){
     return name;
   }
 
   public String toString(){
     return getName();
-  }
-
-  public void printBanner(){
-    System.out.println("\n- - - - - " + name + " - - - - -");
   }
 
   /*
