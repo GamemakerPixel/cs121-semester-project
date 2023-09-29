@@ -9,6 +9,7 @@ public class Character{
     "Base Damage",
   };
   public static final int MAXIMUM_NAME_LENGTH = 16;
+  public static final int MOVESET_SIZE = 2;
 
   public static final int MINIMUM_HIT_POINTS = 25;
   public static final int MINIMUM_BASE_DAMAGE = 10;
@@ -19,6 +20,8 @@ public class Character{
   private String name;
   private int hitPoints;
   private int baseDamage;
+
+  private Move[] moveset;
   
   //private int defense;
   //private int criticalStrikeChance; //out of 100
@@ -46,6 +49,17 @@ public class Character{
 
   public int getBaseDamage(){
     return baseDamage;
+  }
+
+  public void setMoveset(Move[] moveset) throws IllegalArgumentException{
+    if (moveset.length != MOVESET_SIZE){
+      throw new IllegalArgumentException(String.format(
+            "Moveset size %d does not match required size (%d).",
+            moveset.length, MOVESET_SIZE
+            ));
+    }
+
+    this.moveset = moveset;
   }
 
   private static boolean validateStats(int statHitPoints, int statBaseDamage){

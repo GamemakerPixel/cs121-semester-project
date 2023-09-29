@@ -1,0 +1,66 @@
+package characterbattle;
+
+
+
+public class Move{
+  public static int STAT_POINTS = 10;
+
+  public static int MINIMUM_MOVE_POWER = 5;
+  public static int MINIMUM_MOVE_SPEED = 0;
+
+  public static int MOVE_POWER_PER_STAT = 5;
+  public static int MOVE_SPEED_PER_STAT = 1;
+
+  private String name;
+
+  private int statMovePower;
+  private int statMoveSpeed;
+
+  private int movePower;
+  private int moveSpeed;
+
+  public Move(String name, int statMovePower, int statMoveSpeed){
+    if (!validateStats(statMovePower, statMoveSpeed)){
+      throw new IllegalArgumentException(String.format(
+            "Stats for move %s outside allowed range. (mp:%d, ms:%d)",
+            name, statMovePower, statMoveSpeed
+            ));
+    }
+
+    this.name = name;
+    this.movePower = computeMovePower(statMovePower);
+    this.moveSpeed = computeMoveSpeed(statMoveSpeed);
+  }
+
+  public String getName(){
+    return name;
+  }
+
+  public int getMovePower(){
+    return movePower;
+  }
+
+  public int getMoveSpeed(){
+    return moveSpeed;
+  }
+
+  private static boolean validateStats(int statMovePower, int statMoveSpeed){
+    if (statMovePower < 0 || statMoveSpeed < 0){
+      return false;
+    }
+
+    if (statMovePower + statMoveSpeed > STAT_POINTS){
+      return false;
+    }
+
+    return true;
+  }
+
+  public static int computeMovePower(int statMovePower){
+    return MINIMUM_MOVE_POWER + MOVE_POWER_PER_STAT * statMovePower;
+  }
+
+  public static int computeMoveSpeed(int statMoveSpeed){
+    return MINIMUM_MOVE_SPEED + MOVE_SPEED_PER_STAT * statMoveSpeed;
+  }
+}

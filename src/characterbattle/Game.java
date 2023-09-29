@@ -258,12 +258,13 @@ public class Game{
         Character.computeHitPoints(statHitPoints));
     options[1] += String.format(" Stat:%d, Actual:%d",
         statBaseDamage, 
-        Character.computeHitPoints(statHitPoints));
+        Character.computeBaseDamage(statBaseDamage));
 
 
     return StatSelectOption.values()[showMenu(options)];
   }
 
+  //TODO: Allow users to lower stat values.
   private static int promptNewStatValue(int statPointsRemaining){
     while (true){
       System.out.println("Enter a new stat value: ");
