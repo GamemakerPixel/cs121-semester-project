@@ -6,6 +6,7 @@ public class Game{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
   private enum PlayerSelectOption {NEW, LOAD}
   private enum CharacterSelectOption {NEW, LOAD, NONE}
+  private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
 
   private static final boolean DEBUG = true;
   
@@ -217,10 +218,97 @@ public class Game{
 
   }
 
+  //TODO: Unify stats into a datatype
+
   private static Character createCharacter(){
-    //int stat_points_remaining = Character.STAT_POINTS;
-    
-    return new Character("New Character", 7, 8);
+    String name = promptCharacterName();
+
+    int statPointsRemaining = Character.STAT_POINTS;
+
+    int statHitPoints = 0;
+    int statBaseDamage = 0;
+
+    while (true){
+      System.out.printf("%d stat points remaining.\n", statPointsRemaining);
+
+      switch (showStatSelectMenu(statHitPoints, statBaseDamage)){
+        case HIT_POINTS:
+          statHitPoints = promptNewStatValue(statPointsRemaining);
+          statPointsRemaining -= statHitPoints;
+          break;
+        case BASE_DAMAGE:
+          statBaseDamage = promptNewStatValue(statPointsRemaining);
+          statPointsRemaining -= statBaseDamage;
+          break;
+        case FINISH_EDITING:
+          return new Character(name, statHitPoints, statBaseDamage);
+      }
+    }
+  }
+
+  private static StatSelectOption showStatSelectMenu(int statHitPoints, int statBaseDamage){
+    String[] options = new String[Character.STAT_NAMES.length + 1];
+
+    System.arraycopy(Character.STAT_NAMES, 0, options, 0, Character.STAT_NAMES.length);
+
+    options[options.length - 1] = "Finish Editing";
+
+    options[0] += String.format(" Stat:%d, Actual:%d",
+        statHitPoints, 
+        Character.computeHitPoints(statHitPoints));
+    options[1] += String.format(" Stat:%d, Actual:%d",
+        statBaseDamage, 
+        Character.computeHitPoints(statHitPoints));
+
+
+    return StatSelectOption.values()[showMenu(options)];
+  }
+
+  private static int promptNewStatValue(int statPointsRemaining){
+    while (true){
+      System.out.println("Enter a new stat value: ");
+
+      try{
+        int newStatValue = Integer.parseInt(scanner.nextLine());
+
+        if (newStatValue < 0){
+          System.out.println("Value cannot be negative.");
+          continue;
+        }
+
+        if (newStatValue > statPointsRemaining){
+          System.out.println("Not enough stat points! Lower other stat values first.");
+          continue;
+        }
+
+        return newStatValue;
+      }
+      catch (NumberFormatException exception){
+        continue;
+      }
+    }
+  }
+
+  private static String promptCharacterName(){
+    while (true){
+      System.out.printf("Enter a name for your character (%d characters or less): ", Character.MAXIMUM_NAME_LENGTH);
+      String name = scanner.nextLine();
+
+      if (name.length() == 0){
+        System.out.println("You must name your character.");
+        continue;
+      }
+      if (name.equals("Empty Slot")){
+        System.out.println("\"Empty Slot\" is an illegal name.");
+        continue;
+      }
+      if (name.length() > Character.MAXIMUM_NAME_LENGTH){
+        System.out.printf("Name cannot be over %d characters.", Character.MAXIMUM_NAME_LENGTH);
+        continue;
+      }
+
+      return name;
+    }
   }
 
 

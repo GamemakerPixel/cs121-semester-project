@@ -4,6 +4,11 @@ package characterbattle;
 
 public class Character{
   public static final int STAT_POINTS = 15;
+  public static final String[] STAT_NAMES = {
+    "Hit Points",
+    "Base Damage",
+  };
+  public static final int MAXIMUM_NAME_LENGTH = 16;
 
   public static final int MINIMUM_HIT_POINTS = 25;
   public static final int MINIMUM_BASE_DAMAGE = 10;
