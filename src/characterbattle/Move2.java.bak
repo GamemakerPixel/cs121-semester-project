@@ -1,0 +1,146 @@
+package characterbattle;
+
+import java.util.HashMap;
+
+public class Move2{
+  public static final int STAT_POINTS = 10;
+
+  public static final String[] STAT_NAMES = {
+    "movePower",
+    "moveSpeed",
+  };
+
+  private static final HashMap<String, Integer> MINIMUM_STAT_VALUES = new HashMap<>() {{
+    put("movePower", 5);
+    put("moveSpeed", 0);
+  }};
+
+  private static final HashMap<String, Integer> STATS_PER_POINTS = new HashMap<>() {{
+    put("movePower", 5);
+    put("moveSpeed", 1);
+  }}
+
+  private String name;
+
+  private HashMap<String, Integer> statPointValues = new HashMap<>() {{
+    put("movePower", 0);
+    put("moveSpeed", 0);
+  }};
+
+  private HashMap<String, Integer> statTrueValues = new HashMap<>() {{
+    put("movePower", 0);
+    put("moveSpeed", 0);
+  }};
+
+
+  public Move2(String name, int statMovePower, int statMoveSpeed){
+    if (!validateStats(statMovePower, statMoveSpeed)){
+      throw new IllegalArgumentException(String.format(
+            "Stats for move %s outside allowed range. (mp:%d, ms:%d)",
+            name, statMovePower, statMoveSpeed
+            ));
+    }
+
+    this.name = name;
+    this.movePower = computeMovePower(statMovePower);
+    this.moveSpeed = computeMoveSpeed(statMoveSpeed);
+  }
+
+  public void setStats(HashMap<String, Integer> newStats) throws IllegalArgumentException{
+    if (!validateStatKeys(newStats.keySet())){
+      throw new IllegalArgumentException(String.format(
+            "Invalid keys in stats for move %s.", name
+            ));
+    }
+    if (!validateStats(newStats.values())){
+      throw new IllegalArgumentException(String.format(
+            "Stats for move %s outside allowed range.", name
+            ));
+    }
+      
+    this.statPointValues.putAll(newStats);
+  }
+
+  public String getName(){
+    return name;
+  }
+
+  public int getStatPointValue(String statName) throws IllegalArgumentException{
+    Integer statPointValue = statPointValues.get(statName);
+
+    if (statPointValue == null){
+      throw new IllegalArgumentException(String.format(
+            "Invalid stat \"%s\" requested.", name
+            ));
+    }
+
+    return statPointValue;
+  }
+
+  public computeStatTrueValue(String statName) throws IllegalArgumentException{
+    int statPointValue = getStatPointValue(statName);
+
+    return MINIMUM_STAT_VALUES.get(statName)
+      + statPointValue * STATS_PER_POINTS.get(statName);
+  }
+
+
+  private static boolean validateStatKeys(Set<String> newStatKeys){
+    if (newStatKeys.size() != STAT_NAMES.length){
+      // Missing key, or additional keys
+      // Duplicates are not possible in Sets
+      return false;
+    }
+
+statKeyValidationLoop:
+    for (String newStatKey: newStatKeys){
+      for (String validStatKey: STAT_NAMES){
+        if (newStatKey.equals(validStatKey)){
+          continue statKeyValidationLoop;
+        }
+
+        // Invalid Key
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static boolean validateStats(Collection<Integer> newStatPointValues){
+    int statPointSum = 0;
+
+    for (int value: newStatPointValues){
+      if (value < 0){
+        return false;
+      }
+
+      statPointSum += value;
+    }
+
+    if (statPointSum > STAT_POINTS){
+      return false;
+    }
+
+    return true;
+  }
+
+  public static int computeStatValue(int statPointValue, String statName){
+    Integer statPointValue = statPointValues.get(statName);
+
+    if (statPointValue == null){
+      throw new IllegalArgumentException(String.format(
+            "Invalid stat \"%s\" requested.", name
+            ));
+    }
+
+  }
+
+  public static int computeMovePower(int statMovePower){
+    return MINIMUM_MOVE_POWER + MOVE_POWER_PER_STAT * statMovePower;
+  }
+
+  public static int computeMoveSpeed(int statMoveSpeed){
+    return MINIMUM_MOVE_SPEED + MOVE_SPEED_PER_STAT * statMoveSpeed;
+  }
+}
