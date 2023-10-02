@@ -261,14 +261,15 @@ public class Game{
 
       String[] menuOptions = generateStatEditMenuOptions(newStatPointValues, statObject);
 
-      String statToEdit = statNames[showMenu(menuOptions)];
+      int menuIndexSelected = showMenu(menuOptions);
 
-      debugMessage("Stat names array second: " + statNames[1]);
-      debugMessage("statToEdit: " + statToEdit);
-
-      if (statToEdit.equals("Finish Editing")){
+      // Finish Editing
+      if (menuIndexSelected == menuOptions.length - 1){
         statObject.setPointValues(newStatPointValues);
+        return;
       }
+
+      String statToEdit = statNames[menuIndexSelected];
 
       statPointsRemaining -= editStat(statToEdit,
           statPointsRemaining,
@@ -322,9 +323,15 @@ public class Game{
         continue;
       }
 
-      if (pointsToSpend + currentPointsSpent >= pointsToSpend){
+      if (pointsToSpend < 0){
+        System.out.println("You cannot have negative stats.");
+      }
+
+      if (pointsToSpend - currentPointsSpent <= statPointsRemaining){
         break;
       }
+
+      System.out.println("Not enough stat points.");
     }
 
     statPointValues.put(statName, pointsToSpend);
