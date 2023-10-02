@@ -1,6 +1,9 @@
 package characterbattle;
 
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Collection;
 
 public class Game{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
@@ -218,8 +221,47 @@ public class Game{
 
   }
 
-  //TODO: Unify stats into a datatype
+  private static StatObject editStatObject(StatObject statObject){
+    int statPointsRemaining = statObject.getSpendableStatPoints();
 
+    String[] statNames = statObject.getStatNames();
+
+    HashMap<String, Integer> newStatPointValues = new HashMap<>();
+
+    for (String statName: statNames){
+      newStatPointValues.put(statName, statObject.getStatPointValue(statName));
+    }
+
+    while (true){
+      System.out.println("Select a stat to edit or \"Finish Editing\" when you're done.");
+      System.out.printf("Stat Points Remaining: %d\n", statPointsRemaining);
+
+      String[] menuOptions = generateStatEditMenuOptions(newStatPointValues);
+    }
+  }
+
+  private static String[] generateStatEditMenuOptions(HashMap<String, Integer> statPointValues, StatObject statObject){
+    String[] options = new String[statPointValues.keySet().size() + 1];
+
+    String[] statNamesArray = statPointValues.keySet().toArray(new String[0]);
+
+    for (int statNameIndex = 0; statNameIndex < statNamesArray.length; statNameIndex++){
+      String statName = statNamesArray[statNameIndex];
+      int statValue = statPointValues.get(statName);
+
+      options[statNameIndex] = String.format(
+          "%s: %d; Points Spent: %d",
+          statName, 
+          statObject.getStatTheoreticalValue(statName, statValue),
+          statValue
+          );
+    }
+
+    return options;
+  }
+
+  //TODO: Unify stats into a datatype
+/*
   private static Character createCharacter(){
     String name = promptCharacterName();
 
@@ -311,7 +353,7 @@ public class Game{
       return name;
     }
   }
-
+  */
 
   
 }
