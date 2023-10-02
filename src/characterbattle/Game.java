@@ -35,7 +35,7 @@ public class Game{
   private static void debugMessage(String message){
     if (!DEBUG){ return; }
 
-    System.out.println("DEBUG: " + message);
+    System.out.println("* * * DEBUG: " + message);
   }
 
   private static MainMenuOption showMainMenu(){
@@ -221,7 +221,30 @@ public class Game{
 
   }
 
-  private static StatObject editStatObject(StatObject statObject){
+  private static Character createCharacter(){
+    String name;
+
+    while (true){
+      System.out.printf("Enter a name for your character. (%d characters max.)\n",
+          Character.MAXIMUM_NAME_LENGTH);
+      name = scanner.nextLine();
+
+      if (name.length() > Character.MAXIMUM_NAME_LENGTH){
+        System.out.println("Name is too long.");
+        continue;
+      }
+
+      break;
+    }
+
+    Character character = new Character(name);
+
+    editStatObject(character);
+
+    return character;
+  }
+
+  private static void editStatObject(StatObject statObject){
     int statPointsRemaining = statObject.getSpendableStatPoints();
 
     String[] statNames = statObject.getStatNames();
@@ -236,14 +259,32 @@ public class Game{
       System.out.println("Select a stat to edit or \"Finish Editing\" when you're done.");
       System.out.printf("Stat Points Remaining: %d\n", statPointsRemaining);
 
-      String[] menuOptions = generateStatEditMenuOptions(newStatPointValues);
+      String[] menuOptions = generateStatEditMenuOptions(newStatPointValues, statObject);
+
+      String statToEdit = statNames[showMenu(menuOptions)];
+
+      debugMessage("Stat names array second: " + statNames[1]);
+      debugMessage("statToEdit: " + statToEdit);
+
+      if (statToEdit.equals("Finish Editing")){
+        statObject.setPointValues(newStatPointValues);
+      }
+
+      statPointsRemaining -= editStat(statToEdit,
+          statPointsRemaining,
+          newStatPointValues,
+          statObject
+          );
     }
   }
 
-  private static String[] generateStatEditMenuOptions(HashMap<String, Integer> statPointValues, StatObject statObject){
+  private static String[] generateStatEditMenuOptions(
+      HashMap<String, Integer> statPointValues, 
+      StatObject statObject
+  ){
     String[] options = new String[statPointValues.keySet().size() + 1];
 
-    String[] statNamesArray = statPointValues.keySet().toArray(new String[0]);
+    String[] statNamesArray = statObject.getStatNames();
 
     for (int statNameIndex = 0; statNameIndex < statNamesArray.length; statNameIndex++){
       String statName = statNamesArray[statNameIndex];
@@ -257,7 +298,39 @@ public class Game{
           );
     }
 
+    options[options.length - 1] = "Finish Editing";
+
     return options;
+  }
+
+  private static int editStat(String statName, 
+      int statPointsRemaining,
+      HashMap<String, Integer> statPointValues, 
+      StatObject statObject
+  ){
+    int currentPointsSpent = statPointValues.get(statName);
+    int pointsToSpend;
+
+    while (true){
+      System.out.printf("How many points would you like spent on %s?\n", statName);
+
+      try{
+        pointsToSpend = Integer.parseInt(scanner.nextLine());
+      }
+      catch (NumberFormatException exception){
+        System.out.println("Please enter a number.");
+        continue;
+      }
+
+      if (pointsToSpend + currentPointsSpent >= pointsToSpend){
+        break;
+      }
+    }
+
+    statPointValues.put(statName, pointsToSpend);
+    // Difference in points spent originally versus now.
+    return pointsToSpend - currentPointsSpent;
+
   }
 
   //TODO: Unify stats into a datatype

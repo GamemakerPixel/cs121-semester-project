@@ -22,6 +22,8 @@ public class StatObject{
 
     this.spendableStatPoints = spendableStatPoints;
     this.statNames = statNames;
+    minimumTrueValues = new HashMap<String, Integer>();
+    trueValuePerPoint = new HashMap<String, Integer>();
 
     for (int statNameIndex = 0; statNameIndex < statNames.length; statNameIndex++){
       minimumTrueValues.put(statNames[statNameIndex],
@@ -31,6 +33,10 @@ public class StatObject{
     }
 
     pointValues = new HashMap<String, Integer>();
+
+    for (String statName: statNames){
+      pointValues.put(statName, 0);
+    }
   }
 
   public void setPointValues(HashMap<String, Integer> newPointValues) throws IllegalArgumentException{
