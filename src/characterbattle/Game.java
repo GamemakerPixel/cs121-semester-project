@@ -325,6 +325,7 @@ public class Game{
 
       if (pointsToSpend < 0){
         System.out.println("You cannot have negative stats.");
+        continue;
       }
 
       if (pointsToSpend - currentPointsSpent <= statPointsRemaining){
