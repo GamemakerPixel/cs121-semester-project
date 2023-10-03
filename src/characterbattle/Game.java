@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 public class Game{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
@@ -146,7 +147,9 @@ public class Game{
     System.out.printf("\n- - - - - %-16s - - - - -\n", player.getName());
   }
 
-  private static Nameable[] editNameableSlots(Nameable[] nameables, String nameableType){
+  private static Nameable[] editNameableSlots(Nameable[] nameables,
+      String nameableType,
+      Callable newMethod){
     while (true){
       System.out.printf("Select a %s slot to edit, or \"Finish Editing\" when you're done.\n", nameableType);
 
@@ -156,7 +159,7 @@ public class Game{
 
       // Checks if player selects "Finish Editing"
       if (selectedSlotIndex == menuOptions.length - 1){
-        if (isTeamEmpty(nameables)){
+        if (allSlotsEmpty(nameables)){
           System.out.printf("At least one %s is required to continue.\n", nameableType);
 
           continue;
@@ -169,7 +172,7 @@ public class Game{
 
         switch (option){
           case NEW:
-            nameables[selectedSlotIndex] = createCharacter();
+            nameables[selectedSlotIndex] = newMethod.run();
           case LOAD:
             break;
           case NONE:
