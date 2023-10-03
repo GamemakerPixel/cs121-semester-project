@@ -8,7 +8,7 @@ import java.util.Collection;
 public class Game{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
   private enum PlayerSelectOption {NEW, LOAD}
-  private enum CharacterSelectOption {NEW, LOAD, NONE}
+  private enum SlotSelectOption {NEW, LOAD, NONE}
   private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
 
   private static final boolean DEBUG = true;
@@ -146,6 +146,83 @@ public class Game{
     System.out.printf("\n- - - - - %-16s - - - - -\n", player.getName());
   }
 
+  private static Nameable[] editNameableSlots(Nameable[] nameables, String nameableType){
+    while (true){
+      System.out.printf("Select a %s slot to edit, or \"Finish Editing\" when you're done.\n", nameableType);
+
+      String[] menuOptions = generateNameableSlotOptions(nameables);
+
+      int selectedSlotIndex = showMenu(menuOptions);
+
+      // Checks if player selects "Finish Editing"
+      if (selectedSlotIndex == menuOptions.length - 1){
+        if (isTeamEmpty(nameables)){
+          System.out.printf("At least one %s is required to continue.\n", nameableType);
+
+          continue;
+        }
+
+        break;
+      }
+      else{
+        SlotSelectOption option = showSlotSelectMenu();
+
+        switch (option){
+          case NEW:
+            nameables[selectedSlotIndex] = createCharacter();
+          case LOAD:
+            break;
+          case NONE:
+            nameables[selectedSlotIndex] = null;
+        }
+      }
+    } 
+
+    return nameables;
+
+  }
+
+  private static String[] generateNameableSlotOptions(Nameable[] nameables){
+    String[] options = new String[nameables.length + 1];
+
+    for (int nameableIndex = 0; nameableIndex < nameables.length; nameableIndex++){
+      if (nameables[nameableIndex] == null){
+        options[nameableIndex] = "Empty Slot";
+      }
+      else{
+        options[nameableIndex] = nameables[nameableIndex].getName();
+      }
+    }
+
+    options[options.length - 1] = "Finish Editing";
+
+    return options;
+  }
+
+  private static boolean allSlotsEmpty(Nameable[] nameables){
+    for (Nameable nameable: nameables){
+      if (nameable != null){
+        return false;
+      }
+    }
+
+    return true;
+  }
+  
+  private static SlotSelectOption showSlotSelectMenu(String nameableType){
+    String[] options = {
+      "New",
+      "Load",
+      "None",
+    };
+
+    System.out.printf("Select a %s for this slot.\n", nameableType);
+
+    return SlotSelectOption.values()[showMenu(options)];
+
+  }
+
+  /*
   private static Character[] editTeam(Character[] team){
     while (true){
       System.out.println("Select a character slot to edit, or \"Finish Editing\" when you're done.");
@@ -165,7 +242,7 @@ public class Game{
         break;
       }
       else{
-        CharacterSelectOption option = showCharacterSelectMenu();
+        SlotSelectOption option = showCharacterSelectMenu();
 
         switch (option){
           case NEW:
@@ -208,7 +285,7 @@ public class Game{
     return true;
   }
 
-  private static CharacterSelectOption showCharacterSelectMenu(){
+  private static SlotSelectOption showCharacterSelectMenu(){
     String[] options = {
       "New",
       "Load",
@@ -217,9 +294,9 @@ public class Game{
 
     System.out.println("Select a character for this slot.");
 
-    return CharacterSelectOption.values()[showMenu(options)];
+    return SlotSelectOption.values()[showMenu(options)];
 
-  }
+  }*/
 
   private static Character createCharacter(){
     String name;
@@ -340,101 +417,4 @@ public class Game{
     return pointsToSpend - currentPointsSpent;
 
   }
-
-  //TODO: Unify stats into a datatype
-/*
-  private static Character createCharacter(){
-    String name = promptCharacterName();
-
-    int statPointsRemaining = Character.STAT_POINTS;
-
-    int statHitPoints = 0;
-    int statBaseDamage = 0;
-
-    while (true){
-      System.out.printf("%d stat points remaining.\n", statPointsRemaining);
-
-      switch (showStatSelectMenu(statHitPoints, statBaseDamage)){
-        case HIT_POINTS:
-          statHitPoints = promptNewStatValue(statPointsRemaining);
-          statPointsRemaining -= statHitPoints;
-          break;
-        case BASE_DAMAGE:
-          statBaseDamage = promptNewStatValue(statPointsRemaining);
-          statPointsRemaining -= statBaseDamage;
-          break;
-        case FINISH_EDITING:
-          return new Character(name, statHitPoints, statBaseDamage);
-      }
-    }
-  }
-
-  private static StatSelectOption showStatSelectMenu(int statHitPoints, int statBaseDamage){
-    String[] options = new String[Character.STAT_NAMES.length + 1];
-
-    System.arraycopy(Character.STAT_NAMES, 0, options, 0, Character.STAT_NAMES.length);
-
-    options[options.length - 1] = "Finish Editing";
-
-    options[0] += String.format(" Stat:%d, Actual:%d",
-        statHitPoints, 
-        Character.computeHitPoints(statHitPoints));
-    options[1] += String.format(" Stat:%d, Actual:%d",
-        statBaseDamage, 
-        Character.computeBaseDamage(statBaseDamage));
-
-
-    return StatSelectOption.values()[showMenu(options)];
-  }
-
-  //TODO: Allow users to lower stat values.
-  private static int promptNewStatValue(int statPointsRemaining){
-    while (true){
-      System.out.println("Enter a new stat value: ");
-
-      try{
-        int newStatValue = Integer.parseInt(scanner.nextLine());
-
-        if (newStatValue < 0){
-          System.out.println("Value cannot be negative.");
-          continue;
-        }
-
-        if (newStatValue > statPointsRemaining){
-          System.out.println("Not enough stat points! Lower other stat values first.");
-          continue;
-        }
-
-        return newStatValue;
-      }
-      catch (NumberFormatException exception){
-        continue;
-      }
-    }
-  }
-
-  private static String promptCharacterName(){
-    while (true){
-      System.out.printf("Enter a name for your character (%d characters or less): ", Character.MAXIMUM_NAME_LENGTH);
-      String name = scanner.nextLine();
-
-      if (name.length() == 0){
-        System.out.println("You must name your character.");
-        continue;
-      }
-      if (name.equals("Empty Slot")){
-        System.out.println("\"Empty Slot\" is an illegal name.");
-        continue;
-      }
-      if (name.length() > Character.MAXIMUM_NAME_LENGTH){
-        System.out.printf("Name cannot be over %d characters.", Character.MAXIMUM_NAME_LENGTH);
-        continue;
-      }
-
-      return name;
-    }
-  }
-  */
-
-  
 }
