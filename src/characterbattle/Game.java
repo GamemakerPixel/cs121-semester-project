@@ -138,7 +138,11 @@ public class Game{
     for (Player player : players){
       printPlayerBanner(player);
 
-      player.setTeam(editTeam(new Character[Player.TEAM_SIZE]));
+      player.setTeam((Character[]) editNameableSlots(
+          new Character[Player.TEAM_SIZE],
+          "character",
+          () -> { return createCharacter(); }
+          ));
     }
   }
 
@@ -149,7 +153,7 @@ public class Game{
 
   private static Nameable[] editNameableSlots(Nameable[] nameables,
       String nameableType,
-      Callable newMethod){
+      Callable<Nameable> newMethod){
     while (true){
       System.out.printf("Select a %s slot to edit, or \"Finish Editing\" when you're done.\n", nameableType);
 
@@ -168,11 +172,17 @@ public class Game{
         break;
       }
       else{
-        SlotSelectOption option = showSlotSelectMenu();
+        SlotSelectOption option = showSlotSelectMenu(nameableType);
 
         switch (option){
           case NEW:
-            nameables[selectedSlotIndex] = newMethod.run();
+            try{
+              nameables[selectedSlotIndex] = newMethod.call();
+            }
+            catch (Exception exception){
+              System.out.printf("Error: Could not call create method for type %s.", nameableType);
+              nameables[selectedSlotIndex] = null;
+            }
           case LOAD:
             break;
           case NONE:

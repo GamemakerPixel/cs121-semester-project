@@ -2,6 +2,6 @@ package characterbattle;
 
 
 
-interface Nameable{
+public interface Nameable{
   public String getName();
 }
