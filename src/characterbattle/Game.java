@@ -83,6 +83,10 @@ public class Game{
 
     initializeTeams(players);
 
+    //Here would be a good spot to save new game data.
+    
+    battleTournament(players, rounds);
+
   }
 
   private static Player selectPlayer(int number){
@@ -154,7 +158,7 @@ public class Game{
     for (Character character: characters){
       if (character == null){ continue; }
 
-      System.out.printf("Create a moveset for %s.", character.getName());
+      System.out.printf("Create a moveset for %s.\n", character.getName());
       
       character.setMoveset((Move[]) editNameableSlots(
             new Move[Character.MOVESET_SIZE],
@@ -252,82 +256,6 @@ public class Game{
     return SlotSelectOption.values()[showMenu(options)];
 
   }
-
-  /*
-  private static Character[] editTeam(Character[] team){
-    while (true){
-      System.out.println("Select a character slot to edit, or \"Finish Editing\" when you're done.");
-
-      String[] menuOptions = generateEditTeamMenuOptions(team);
-
-      int selectedCharacterIndex = showMenu(menuOptions);
-
-      // Checks if player selects "Finish Editing"
-      if (selectedCharacterIndex == menuOptions.length - 1){
-        if (isTeamEmpty(team)){
-          System.out.println("At least one character is required to continue.");
-
-          continue;
-        }
-
-        break;
-      }
-      else{
-        SlotSelectOption option = showCharacterSelectMenu();
-
-        switch (option){
-          case NEW:
-            team[selectedCharacterIndex] = createCharacter();
-          case LOAD:
-            break;
-          case NONE:
-            team[selectedCharacterIndex] = null;
-        }
-      }
-    } 
-
-    return team;
-  }
-
-  private static String[] generateEditTeamMenuOptions(Character[] team){
-    String[] options = new String[team.length + 1];
-
-    for (int characterIndex = 0; characterIndex < team.length; characterIndex++){
-      if (team[characterIndex] == null){
-        options[characterIndex] = "Empty Slot";
-      }
-      else{
-        options[characterIndex] = team[characterIndex].getName();
-      }
-    }
-
-    options[options.length - 1] = "Finish Editing";
-
-    return options;
-  }
-
-  private static boolean isTeamEmpty(Character[] team){
-    for (Character character : team){
-      if (character != null){
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private static SlotSelectOption showCharacterSelectMenu(){
-    String[] options = {
-      "New",
-      "Load",
-      "None",
-    };
-
-    System.out.println("Select a character for this slot.");
-
-    return SlotSelectOption.values()[showMenu(options)];
-
-  }*/
 
   private static Character createCharacter(){
     String name;
@@ -472,5 +400,24 @@ public class Game{
     // Difference in points spent originally versus now.
     return pointsToSpend - currentPointsSpent;
 
+  }
+
+  private static void battleTournament(Player[] players, int rounds){
+    displayTournamentBanner(players, rounds);
+  }
+
+  private static void displayTournamentBanner(Player[] players, int rounds){
+    String header = String.format(
+        "# - # - # - # - # - # - # - # - # - # - # - # -\n" + 
+        "# - " +       "%16s vs %-16s " +        " - # -\n" +
+        "# - # - # - # - # - # - # - # - # - # - # - # -\n" + 
+        "# - # - # - IN A %d ROUND TOURNAMENT! - # - # -\n" +
+        "# - # - # - # - # - # - # - # - # - # - # - # -\n",
+
+        players[0].getName(), players[1].getName(),
+        rounds
+        );
+
+    System.out.println(header);
   }
 }
