@@ -404,6 +404,12 @@ public class Game{
 
   private static void battleTournament(Player[] players, int rounds){
     displayTournamentBanner(players, rounds);
+
+    int[] scores = new int[2];
+
+    for (int roundIndex = 0; roundIndex < rounds; roundIndex++){
+      scores[battleRound(players)]++;
+    }
   }
 
   private static void displayTournamentBanner(Player[] players, int rounds){
@@ -419,5 +425,10 @@ public class Game{
         );
 
     System.out.println(header);
+  }
+
+  //Returns the index of the player that wins the round.
+  private static int battleRound(Player[] players){
+    Character[] selectedCharacters = new Character[players.length];
   }
 }

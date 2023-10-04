@@ -41,6 +41,18 @@ public class Character extends StatObject implements Nameable{
     return name;
   }
 
+  public Move getMove(String name){
+    for (Move move: moveset){
+      if (move == null){
+        continue;
+      }
+      if (move.getName().equals(name)){
+        return move;
+      }
+    }
+    return null;
+  }
+
   public void setMoveset(Move[] moveset) throws IllegalArgumentException{
     if (moveset.length != MOVESET_SIZE){
       throw new IllegalArgumentException(String.format(

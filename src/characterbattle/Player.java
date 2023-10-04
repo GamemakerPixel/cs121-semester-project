@@ -48,6 +48,41 @@ public class Player{
     return name;
   }
 
+  public String[] getCharacterNames(){
+    int trueTeamLength = 0;
+
+    for (Character character: team){
+      if (character != null){
+        trueTeamLength++;
+      }
+    }
+
+    String[] characterNames = new String[trueTeamLength];
+
+    int trueCharacterIndex = 0;
+    for (Character character: team){
+      if (character != null){
+        characterNames[trueCharacterIndex] = character.getName();
+        trueCharacterIndex++;
+      }
+    }
+
+    return characterNames;
+  }
+
+  public Character getCharacter(String characterName){
+    for (Character character: team){
+      if (character == null){
+        continue;
+      }
+      if (character.getName().equals(characterName)){
+        return character;
+      }
+    }
+
+    return null;
+  }
+
   public String toString(){
     return getName();
   }
