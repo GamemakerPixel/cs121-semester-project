@@ -138,11 +138,29 @@ public class Game{
     for (Player player : players){
       printPlayerBanner(player);
 
-      player.setTeam((Character[]) editNameableSlots(
+      Character[] team = (Character[]) editNameableSlots(
           new Character[Player.TEAM_SIZE],
           "character",
           () -> { return createCharacter(); }
-          ));
+          );
+
+      player.setTeam(team);
+
+      initializeMovesets(team);
+    }
+  }
+
+  private static void initializeMovesets(Character[] characters){
+    for (Character character: characters){
+      if (character == null){ continue; }
+
+      System.out.printf("Create a moveset for %s.", character.getName());
+      
+      character.setMoveset((Move[]) editNameableSlots(
+            new Move[Character.MOVESET_SIZE],
+            "move",
+            () -> { return createMove(); }
+            ));
     }
   }
 
@@ -332,6 +350,31 @@ public class Game{
     editStatObject(character);
 
     return character;
+  }
+
+  //Realistically I could have done some abstraction and combined createCharacter() and createMove(), but I don't really have time.
+  private static Move createMove(){
+    String name;
+
+    while (true){
+      System.out.printf("Enter a name for this move. (%d characters max.)\n",
+          Move.MAXIMUM_NAME_LENGTH);
+      name = scanner.nextLine();
+
+      if (name.length() > Move.MAXIMUM_NAME_LENGTH){
+        System.out.println("Name is too long.");
+        continue;
+      }
+
+      break;
+    }
+
+    Move move = new Move(name);
+
+    editStatObject(move);
+
+    return move;
+
   }
 
   private static void editStatObject(StatObject statObject){
