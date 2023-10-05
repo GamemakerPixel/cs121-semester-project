@@ -2,9 +2,24 @@
   "players":[
     {
       "name":"Turtle",
-      "characters":[
+      "roundsWon":12,
+      "tournamentsWon":2,
+      "team":[
         {
-          "name":"Scutes"
+          "name":"Scutes",
+          "statPointValues":[
+            "Hit Points": 5,
+            "Base Power": 10
+          ],
+          "moveset":[
+            {
+              "name":"Slash",
+              "statPointValues":[
+                "Move Power": 3,
+                "Move Speed": 7
+              ]
+            }
+          ]
 
         }
       ]
