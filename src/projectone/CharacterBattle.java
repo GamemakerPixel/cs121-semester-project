@@ -8,9 +8,9 @@ import java.util.concurrent.Callable;
 import java.util.ArrayList;
 
 public class Game{
-  private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
-  private enum PlayerSelectOption {NEW, LOAD}
-  private enum SlotSelectOption {NEW, LOAD, NONE}
+  private enum MainMenuOption {PLAY, EXIT}
+  private enum PlayerSelectOption {NEW}
+  private enum SlotSelectOption {NEW, NONE}
   private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
 
   private static final boolean DEBUG = false;
@@ -23,9 +23,6 @@ public class Game{
         case PLAY:
           debugMessage("Playing game...");
           play();
-          break;
-        case LEADERBOARD:
-          debugMessage("Showing leaderboard...");
           break;
         case EXIT:
           debugMessage("Quitting...");
@@ -43,7 +40,6 @@ public class Game{
   private static MainMenuOption showMainMenu(){
     String[] options = {
       "Play",
-      "Leaderboard",
       "Quit",
     };
 
@@ -97,7 +93,6 @@ public class Game{
   private static Player selectPlayer(int number){
     String[] options = {
       "New",
-      "Load",
     };
 
     System.out.printf("\nWho is player %d?\n", number);
@@ -107,9 +102,6 @@ public class Game{
     switch (option){
       case NEW:
         return createNewPlayer();
-      case LOAD:
-        //TODO: Loading players from file
-        return new Player("LOADED_PLAYER");
     }
   
     //Unreachable
@@ -211,8 +203,6 @@ public class Game{
               System.out.printf("Error: Could not call create method for type %s.", nameableType);
               nameables[selectedSlotIndex] = null;
             }
-          case LOAD:
-            break;
           case NONE:
             nameables[selectedSlotIndex] = null;
         }
@@ -253,7 +243,6 @@ public class Game{
   private static SlotSelectOption showSlotSelectMenu(String nameableType){
     String[] options = {
       "New",
-      "Load",
       "None",
     };
 
