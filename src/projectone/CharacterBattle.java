@@ -211,6 +211,7 @@ public class Game{
               System.out.printf("Error: Could not call create method for type %s.", nameableType);
               nameables[selectedSlotIndex] = null;
             }
+            break;
           case LOAD:
             break;
           case NONE:
