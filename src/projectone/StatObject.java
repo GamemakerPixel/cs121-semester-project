@@ -128,7 +128,7 @@ newStatNameLoop:
     return statNames;
   }
 
-  protected HashMap<String, int> getPointValues(){
+  protected HashMap<String, Integer> getPointValues(){
     return pointValues;
   }
 
