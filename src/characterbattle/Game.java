@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.ArrayList;
 
 public class Game{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
@@ -12,7 +13,7 @@ public class Game{
   private enum SlotSelectOption {NEW, LOAD, NONE}
   private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
 
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   
   private static Scanner scanner = new Scanner(System.in);
   
@@ -46,7 +47,7 @@ public class Game{
       "Quit",
     };
 
-    System.out.println("Welcome to Bit Bash!");
+    System.out.println("\nWelcome to Bit Bash!");
 
     return MainMenuOption.values()[showMenu(options)];
   }
@@ -70,6 +71,10 @@ public class Game{
         continue;
       }
     }
+  }
+
+  private static String showUnindexedMenu(String[] options){
+    return options[showMenu(options)];
   }
 
   //Maintains control over game while playing
@@ -158,7 +163,7 @@ public class Game{
     for (Character character: characters){
       if (character == null){ continue; }
 
-      System.out.printf("Create a moveset for %s.\n", character.getName());
+      System.out.printf("\nCreate a moveset for %s.\n", character.getName());
       
       character.setMoveset((Move[]) editNameableSlots(
             new Move[Character.MOVESET_SIZE],
@@ -170,14 +175,15 @@ public class Game{
 
   //TODO: Limit player name length to 16 characters
   private static void printPlayerBanner(Player player){
-    System.out.printf("\n- - - - - %-16s - - - - -\n", player.getName());
+    System.out.printf("\n- - - - - %s - - - - -\n", player.getName() + "\'s Turn");
   }
 
   private static Nameable[] editNameableSlots(Nameable[] nameables,
       String nameableType,
       Callable<Nameable> newMethod){
     while (true){
-      System.out.printf("Select a %s slot to edit, or \"Finish Editing\" when you're done.\n", nameableType);
+      System.out.printf("Select a %s slot to edit, or \"Finish Editing\" when you're done.\n"
+          + "(Must have one filled slot.)\n", nameableType);
 
       String[] menuOptions = generateNameableSlotOptions(nameables);
 
@@ -261,7 +267,7 @@ public class Game{
     String name;
 
     while (true){
-      System.out.printf("Enter a name for your character. (%d characters max.)\n",
+      System.out.printf("\nEnter a name for your character. (%d characters max.)\n",
           Character.MAXIMUM_NAME_LENGTH);
       name = scanner.nextLine();
 
@@ -285,7 +291,7 @@ public class Game{
     String name;
 
     while (true){
-      System.out.printf("Enter a name for this move. (%d characters max.)\n",
+      System.out.printf("\nEnter a name for this move. (%d characters max.)\n",
           Move.MAXIMUM_NAME_LENGTH);
       name = scanner.nextLine();
 
@@ -317,7 +323,7 @@ public class Game{
     }
 
     while (true){
-      System.out.println("Select a stat to edit or \"Finish Editing\" when you're done.");
+      System.out.println("\nSelect a stat to edit or \"Finish Editing\" when you're done.");
       System.out.printf("Stat Points Remaining: %d\n", statPointsRemaining);
 
       String[] menuOptions = generateStatEditMenuOptions(newStatPointValues, statObject);
@@ -374,7 +380,7 @@ public class Game{
     int pointsToSpend;
 
     while (true){
-      System.out.printf("How many points would you like spent on %s?\n", statName);
+      System.out.printf("\nHow many points would you like spent on %s?\n", statName);
 
       try{
         pointsToSpend = Integer.parseInt(scanner.nextLine());
@@ -408,20 +414,27 @@ public class Game{
     int[] scores = new int[2];
 
     for (int roundIndex = 0; roundIndex < rounds; roundIndex++){
-      scores[battleRound(players)]++;
+      System.out.printf("v v - - - Round %d! - - - v v", roundIndex + 1);
+      int winner = battleRound(players);
+      System.out.printf("\n!!! - X - %s has won the round! - X - !!!\n", players[winner].getName());
+      scores[winner]++;
     }
+
+    Player winningPlayer = determineTournamentWinner(players, scores);
+
+    printTournamentResults(players, scores, winningPlayer);
   }
 
   private static void displayTournamentBanner(Player[] players, int rounds){
-    String header = String.format(
+    String header = String.format("\n" +
         "# - # - # - # - # - # - # - # - # - # - # - # -\n" + 
         "# - " +       "%16s vs %-16s " +        " - # -\n" +
         "# - # - # - # - # - # - # - # - # - # - # - # -\n" + 
-        "# - # - # - IN A %d ROUND TOURNAMENT! - # - # -\n" +
+        "# - # - # - IN A %2s ROUND TOURNAMENT! - # - # -\n" +
         "# - # - # - # - # - # - # - # - # - # - # - # -\n",
 
         players[0].getName(), players[1].getName(),
-        rounds
+        String.format("%d", rounds)
         );
 
     System.out.println(header);
@@ -430,5 +443,138 @@ public class Game{
   //Returns the index of the player that wins the round.
   private static int battleRound(Player[] players){
     Character[] selectedCharacters = new Character[players.length];
+
+    for (int playerIndex = 0; playerIndex < players.length; playerIndex++){
+      Player player = players[playerIndex];
+      printPlayerBanner(player);
+      System.out.println("Select a character to use for this round.");
+
+      String[] characterNames = player.getCharacterNames();
+
+      Character selectedCharacter = player.getCharacter(showUnindexedMenu(characterNames));
+      selectedCharacters[playerIndex] = selectedCharacter;
+
+      debugMessage("Player choose " + selectedCharacter);
+    }
+
+    Character.RoundState[] characterStates = new Character.RoundState[selectedCharacters.length];
+
+    for (int characterIndex = 0; characterIndex < selectedCharacters.length; characterIndex++){
+      characterStates[characterIndex] = selectedCharacters[characterIndex].generateRoundState();
+    }
+
+    while (true){
+      int winner = battleSubround(players, selectedCharacters, characterStates);
+
+      if (winner != -1){
+        return winner;
+      }
+    }
+  }
+
+  private static int battleSubround(Player[] players, Character[] characters, Character.RoundState[] states){
+    printCurrentStates(states);
+
+    Move[] moves = new Move[players.length];
+
+    for (int playerIndex = 0; playerIndex < players.length; playerIndex++){
+      printPlayerBanner(players[playerIndex]);
+
+      System.out.println("Select a move to use.");
+
+      String[] moveNames = characters[playerIndex].getMovesetNames();
+
+      moves[playerIndex] = characters[playerIndex].getMove(showUnindexedMenu(moveNames));
+    }
+
+    System.out.println("\nX - X - Attacking! - X - X\n");
+
+    int[] moveSpeedRanking = rankMoveSpeed(moves);
+
+    for (int rankedIndex: moveSpeedRanking){
+      int totalDamage = characters[rankedIndex].getStatTrueValue("Base Power")
+        + moves[rankedIndex].getStatTrueValue("Move Power");
+      
+      System.out.printf("%s uses %s, it does %d damage!\n",
+          characters[rankedIndex].getName(),
+          moves[rankedIndex].getName(),
+          totalDamage
+          );
+
+      states[1 - rankedIndex].takeDamage(totalDamage);
+
+      int winner = determineWinner(states);
+
+      if (winner != -1){
+        return winner;
+      }
+    }
+
+    // No winner yet, keep fighting.
+    return -1;
+  }
+
+  private static void printCurrentStates(Character.RoundState[] states){
+    System.out.println("\n<3 - - - - - - - - <3");
+    for (Character.RoundState state: states){
+      System.out.printf("%s: %d HP\n", state.getName(), state.getHitPoints());
+      System.out.println("-- - - - - - - - - --");
+    }
+  }
+
+  private static int[] rankMoveSpeed(Move[] moves){
+    //Lazy solution, could update later for multiple players
+    if (moves[1].getStatTrueValue("Move Speed") > moves[0].getStatTrueValue("Move Speed") ||
+        moves[1].getStatTrueValue("Move Speed") == moves[0].getStatTrueValue("Move Speed") &&
+        (int)(2 * Math.random()) == 1){
+      return new int[] {1, 0};
+        }
+    else{
+      return new int[] {0, 1};
+    }
+  }
+
+  private static int determineWinner(Character.RoundState[] states){
+    for (int stateIndex = 0; stateIndex < states.length; stateIndex++){
+      if (states[stateIndex].isDefeated()){
+        return 1 - stateIndex;
+      }
+    }
+    
+    return -1;
+  }
+
+  private static Player determineTournamentWinner(Player[] players, int[] scores){
+    int maxScore = -1;
+    int maxScoreIndex = 0;
+
+    for (int scoreIndex = 0; scoreIndex < scores.length; scoreIndex++){
+      if (scores[scoreIndex] > maxScore){
+        maxScore = scores[scoreIndex];
+        maxScoreIndex = scoreIndex;
+      }
+    }
+
+    return players[maxScoreIndex];
+  }
+
+  private static void printTournamentResults(Player[] players, int[] scores, Player winningPlayer){
+    System.out.printf("\n"
+        + "# - # - # - # - # - # - # - # - # - # - # - # - \n"
+        + "# - # - ...AND THE RESULTS ARE IN...  - # - # - \n"
+        + "# - # - # - # - # - # - # - # - # - # - # - # - \n"
+        + "# - # - # - # FINAL SCORES: # - # - # - # - # - \n");
+    for (int playerIndex = 0; playerIndex < players.length; playerIndex++){
+      System.out.printf(
+          "With a final score of %d... %s!\n",
+          scores[playerIndex], players[playerIndex].getName()
+          );
+    }
+    System.out.printf(
+          "# - # - # - # - # - # - # - # - # - # - # - # - \n"
+        + "AND THE WINNER IS... %s!!\n"
+        + "# - # - # - # - # - # - # - # - # - # - # - # - \n",
+        winningPlayer.getName()
+        );
   }
 }

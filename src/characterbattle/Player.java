@@ -83,6 +83,10 @@ public class Player{
     return null;
   }
 
+  public Character getCharacterByIndex(int index){
+    return team[index];
+  }
+
   public String toString(){
     return getName();
   }

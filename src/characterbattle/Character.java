@@ -1,6 +1,6 @@
 package characterbattle;
 
-
+import java.util.HashMap;
 
 public class Character extends StatObject implements Nameable{
   public static final int SPENDABLE_STAT_POINTS = 15;
@@ -25,6 +25,36 @@ public class Character extends StatObject implements Nameable{
 
   private String name;
   private Move[] moveset;
+
+  public class RoundState{
+    private int hitPoints;
+    private String name;
+
+    public RoundState(Character character){
+      hitPoints = character.getStatTrueValue("Hit Points");
+      name = character.getName();
+    }
+
+    public int takeDamage(int damage){
+      hitPoints -= damage;
+      if (hitPoints < 0){
+        hitPoints = 0;
+      }
+      return hitPoints;
+    }
+
+    public int getHitPoints(){
+      return hitPoints;
+    }
+
+    public boolean isDefeated(){
+      return hitPoints == 0;
+    }
+
+    public String getName(){
+      return name;
+    }
+  }
 
 
   public Character(String name){
@@ -53,6 +83,32 @@ public class Character extends StatObject implements Nameable{
     return null;
   }
 
+  public RoundState generateRoundState(){
+    return new RoundState(this);
+  }
+
+  public String[] getMovesetNames(){
+    int trueMovesetSize = 0;
+
+    for (Move move: moveset){
+      if (move != null){
+        trueMovesetSize++;
+      }
+    }
+
+    String[] trueMovesetNames = new String[trueMovesetSize];
+    
+    int trueMoveIndex = 0;
+    for (Move move: moveset){
+      if (move != null){
+        trueMovesetNames[trueMoveIndex] = move.getName();
+        trueMoveIndex++;
+      }
+    }
+
+    return trueMovesetNames;
+  }
+
   public void setMoveset(Move[] moveset) throws IllegalArgumentException{
     if (moveset.length != MOVESET_SIZE){
       throw new IllegalArgumentException(String.format(
@@ -62,6 +118,10 @@ public class Character extends StatObject implements Nameable{
     }
 
     this.moveset = moveset;
+  }
+
+  public String toString(){
+    return getName();
   }
 
 } 
