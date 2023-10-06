@@ -1,0 +1,15 @@
+{
+  "string":"Hello World!",
+  "integer":5,
+  "array":[
+    {
+    "beanCount":10
+    },
+    {
+    "bertName":"A"
+    }
+  ],
+  "object":{
+    "name":"turtle"
+  }
+}

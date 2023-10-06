@@ -8,15 +8,15 @@
         {
           "name":"Scutes",
           "statPointValues":[
-            "Hit Points": 5,
-            "Base Power": 10
+            "Hit Points":5,
+            "Base Power":10
           ],
           "moveset":[
             {
               "name":"Slash",
               "statPointValues":[
-                "Move Power": 3,
-                "Move Speed": 7
+                "Move Power":3,
+                "Move Speed":7
               ]
             }
           ]
