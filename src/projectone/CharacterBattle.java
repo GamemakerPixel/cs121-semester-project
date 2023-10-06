@@ -1,4 +1,4 @@
-package characterbattle;
+package projectone;
 
 import java.util.Scanner;
 import java.util.HashMap;
