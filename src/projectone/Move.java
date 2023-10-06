@@ -13,12 +13,12 @@ public class Move extends StatObject implements Nameable{
   };
 
   private static final int[] STAT_MINIMUMS = {
-    5,
+    20,
     0,
   };
 
   private static final int[] STAT_PER_POINT_VALUES = {
-    5,
+    3,
     1,
   };
 

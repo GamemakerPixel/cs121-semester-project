@@ -4,7 +4,7 @@ package projectone;
 
 public class Player{
   public static final int MAXIMUM_NAME_LENGTH = 16;
-  public static final int TEAM_SIZE = 2;
+  public static final int TEAM_SIZE = 3;
 
   //protected static int lastId = 0;
   //protected int id;

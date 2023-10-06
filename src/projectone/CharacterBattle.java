@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.ArrayList;
 
-public class Game{
+public class CharacterBattle{
   private enum MainMenuOption {PLAY, EXIT}
   private enum PlayerSelectOption {NEW}
   private enum SlotSelectOption {NEW, NONE}
