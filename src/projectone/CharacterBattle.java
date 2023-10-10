@@ -1,4 +1,4 @@
-package characterbattle;
+package projectone;
 
 import java.util.Scanner;
 import java.util.HashMap;
@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.ArrayList;
 
-public class Game{
+public class CharacterBattle{
   private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
   private enum PlayerSelectOption {NEW, LOAD}
-  private enum SlotSelectOption {NEW, LOAD, NONE}
+  private enum SlotSelectOption {NEW, NONE}
   private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
 
   private static final boolean DEBUG = false;
@@ -25,7 +25,7 @@ public class Game{
           play();
           break;
         case LEADERBOARD:
-          debugMessage("Showing leaderboard...");
+          displayLeaderboard();
           break;
         case EXIT:
           debugMessage("Quitting...");
@@ -65,7 +65,10 @@ public class Game{
       int selectedIndex;
 
       try{
-        return Integer.parseInt(input);
+        selectedIndex = Integer.parseInt(input);
+
+        if (selectedIndex >= options.length){ continue; }
+        return selectedIndex;
       }
       catch (NumberFormatException exception){
         continue;
@@ -94,6 +97,67 @@ public class Game{
 
   }
 
+  private static void displayLeaderboard(){
+    HashMap<String, Integer> leaderboard = LeaderboardEditor.readLeaderboard();
+
+    ArrayList<String> playerNames = new ArrayList<>(leaderboard.keySet());
+    ArrayList<Integer> scores = new ArrayList<>(leaderboard.values());
+
+    if (playerNames.size() == 0){
+      System.out.println("\nNo one has played the game on this device yet!");
+      return;
+    }
+
+    // Sort
+    for (int startIndex = 0; startIndex < scores.size() - 1; startIndex++){
+      String maximumPlayerName = "";
+      int maximumScore = -1;
+      int maximumIndex = -1;
+      for (int scoreIndex = startIndex; scoreIndex < scores.size(); scoreIndex++){
+        if (scores.get(scoreIndex) > maximumScore){
+          maximumScore = scores.get(scoreIndex);
+          maximumPlayerName = playerNames.get(scoreIndex);
+          maximumIndex = scoreIndex;
+        }
+      }
+
+      playerNames.remove(maximumIndex);
+      playerNames.add(startIndex, maximumPlayerName);
+
+      scores.remove(maximumIndex);
+      scores.add(startIndex, maximumScore);
+    }
+
+    System.out.println("\n- - - - - Leaderboard - - - - -");
+    System.out.println("Player:              \tScore:");
+
+    int placementNumber = 1;
+    int placementDifference = 1;
+
+    for (int playerIndex = 0; playerIndex < playerNames.size(); playerIndex++){
+      System.out.printf(
+          "\t%d. %-18s\t%d\n",
+          placementNumber,
+          playerNames.get(playerIndex),
+          scores.get(playerIndex)
+          );
+
+      // Does not increment placement if next player is tied (or if there is no next player)
+      if (playerIndex + 1 < playerNames.size()
+          && scores.get(playerIndex) != scores.get(playerIndex + 1)){
+        placementNumber += placementDifference;
+        placementDifference = 1;
+          }
+      else{
+        // If a tie occurs, the next place won't exist
+        // Ex: 1st, 2nd, 2nd, 4th, 5th
+        placementDifference++;
+      }
+    }
+
+
+  }
+
   private static Player selectPlayer(int number){
     String[] options = {
       "New",
@@ -108,8 +172,12 @@ public class Game{
       case NEW:
         return createNewPlayer();
       case LOAD:
-        //TODO: Loading players from file
-        return new Player("LOADED_PLAYER");
+        Player loadedPlayer = loadPlayer();
+        if (loadedPlayer == null){
+          System.out.println("\nNo players have been created on this device yet!");
+          return selectPlayer(number);
+        }
+        return loadedPlayer;
     }
   
     //Unreachable
@@ -121,6 +189,18 @@ public class Game{
     String name = scanner.nextLine();
 
     return new Player(name);
+  }
+
+  private static Player loadPlayer(){
+    String[] loadablePlayers = LeaderboardEditor.readLeaderboard().keySet().toArray(new String[0]);
+
+    if (loadablePlayers.length == 0){
+      return null;
+    }
+
+    return new Player(
+        loadablePlayers[showMenu(loadablePlayers)]
+        );
   }
 
   private static int promptForRounds(){
@@ -212,8 +292,6 @@ public class Game{
               nameables[selectedSlotIndex] = null;
             }
             break;
-          case LOAD:
-            break;
           case NONE:
             nameables[selectedSlotIndex] = null;
         }
@@ -254,7 +332,6 @@ public class Game{
   private static SlotSelectOption showSlotSelectMenu(String nameableType){
     String[] options = {
       "New",
-      "Load",
       "None",
     };
 
@@ -493,16 +570,17 @@ public class Game{
     int[] moveSpeedRanking = rankMoveSpeed(moves);
 
     for (int rankedIndex: moveSpeedRanking){
-      int totalDamage = characters[rankedIndex].getStatTrueValue("Base Power")
+      int rawDamage = characters[rankedIndex].getStatTrueValue("Base Power")
         + moves[rankedIndex].getStatTrueValue("Move Power");
+      int trueDamage = characters[1 - rankedIndex].calculateTrueDamage(rawDamage);
       
       System.out.printf("%s uses %s, it does %d damage!\n",
           characters[rankedIndex].getName(),
           moves[rankedIndex].getName(),
-          totalDamage
+          trueDamage
           );
 
-      states[1 - rankedIndex].takeDamage(totalDamage);
+      states[1 - rankedIndex].takeDamage(trueDamage);
 
       int winner = determineWinner(states);
 
@@ -576,6 +654,26 @@ public class Game{
         + "AND THE WINNER IS... %s!!\n"
         + "# - # - # - # - # - # - # - # - # - # - # - # - \n",
         winningPlayer.getName()
+        );
+
+    Player losingPlayer = (winningPlayer == players[0]) ? players[1] : players[0];
+
+    int[] previousScores = new int[] {
+      LeaderboardEditor.getPlayerScore(winningPlayer.getName()),
+      LeaderboardEditor.getPlayerScore(losingPlayer.getName()),
+    };
+    int[] trophyChange = LeaderboardEditor.recordTournamentResults(
+        winningPlayer.getName(), losingPlayer.getName());
+
+    System.out.printf(
+        "\n%s was awarded %d trophies, and %s was deducted %d."
+        + "\n%s %d -> %d"
+        + "\n%s %d -> %d\n",
+        winningPlayer.getName(), trophyChange[0],
+        losingPlayer.getName(), trophyChange[1],
+
+        winningPlayer.getName(), previousScores[0], previousScores[0] + trophyChange[0],
+        losingPlayer.getName(), previousScores[1], previousScores[1] - trophyChange[1]
         );
   }
 }

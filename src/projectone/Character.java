@@ -1,26 +1,29 @@
-package characterbattle;
+package projectone;
 
 import java.util.HashMap;
 
 public class Character extends StatObject implements Nameable{
-  public static final int SPENDABLE_STAT_POINTS = 15;
+  public static final int SPENDABLE_STAT_POINTS = 20;
 
   public static final int MAXIMUM_NAME_LENGTH = 16;
-  public static final int MOVESET_SIZE = 2;
+  public static final int MOVESET_SIZE = 3;
 
   public static final String[] STAT_NAMES = {
     "Hit Points",
     "Base Power",
+    "Defense",
   };
 
   private static final int[] STAT_MINIMUMS = {
-    25,
-    10,
+    80,
+    15,
+    0,
   };
 
   private static final int[] STAT_PER_POINT_VALUES = {
-    5,
+    8,
     3,
+    2,
   };
 
   private String name;
@@ -107,6 +110,13 @@ public class Character extends StatObject implements Nameable{
     }
 
     return trueMovesetNames;
+  }
+
+  public int calculateTrueDamage(int rawDamage){
+    // Enemy attack must do a minimum of 1 damage.
+    return Math.max(
+        1, rawDamage - getStatTrueValue("Defense")
+        );
   }
 
   public void setMoveset(Move[] moveset) throws IllegalArgumentException{

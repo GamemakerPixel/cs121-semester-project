@@ -1,0 +1,4 @@
+Damage Resist
+Life Steal
+Defense
+
