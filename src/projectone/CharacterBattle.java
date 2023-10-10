@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.ArrayList;
 
 public class CharacterBattle{
-  private enum MainMenuOption {PLAY, LEADERBOARD, EXIT}
+  private enum MainMenuOption {PLAY, LEADERBOARD, STATS, EXIT}
   private enum PlayerSelectOption {NEW, LOAD}
   private enum SlotSelectOption {NEW, NONE}
   private enum StatSelectOption {HIT_POINTS, BASE_DAMAGE, FINISH_EDITING}
@@ -27,6 +27,9 @@ public class CharacterBattle{
         case LEADERBOARD:
           displayLeaderboard();
           break;
+        case STATS:
+          explainStats();
+          break;
         case EXIT:
           debugMessage("Quitting...");
           return;
@@ -44,6 +47,7 @@ public class CharacterBattle{
     String[] options = {
       "Play",
       "Leaderboard",
+      "Explain Stats",
       "Quit",
     };
 
@@ -156,6 +160,18 @@ public class CharacterBattle{
     }
 
 
+  }
+
+  private static void explainStats(){
+    System.out.printf(
+        "\n- - Character Stats - -\n"
+        + "Hit Points: The amount of damage a character can take before losing the round.\n"
+        + "Base Power: Added to a move's \"Move Power\" to determine raw damage inflicted on the enemy.\n"
+        + "Defense: Reduces damage taken by this character by this amount with a minimum damage of 1.\n"
+        + "\n- - Move Stats - -\n"
+        + "Move Power: Added to a character's \"Base Power\" to determine raw damage inflicted on the enemy.\n"
+        + "Move Speed: The move with the larger speed gets to attack first, if they are equal, it is random.\n"
+        );
   }
 
   private static Player selectPlayer(int number){
