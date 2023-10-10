@@ -105,6 +105,7 @@ public class CharacterBattle{
 
     if (playerNames.size() == 0){
       System.out.println("\nNo one has played the game on this device yet!");
+      return;
     }
 
     // Sort
@@ -173,7 +174,7 @@ public class CharacterBattle{
       case LOAD:
         Player loadedPlayer = loadPlayer();
         if (loadedPlayer == null){
-          System.out.println("No players have been created on this device yet!");
+          System.out.println("\nNo players have been created on this device yet!");
           return selectPlayer(number);
         }
         return loadedPlayer;
@@ -569,16 +570,17 @@ public class CharacterBattle{
     int[] moveSpeedRanking = rankMoveSpeed(moves);
 
     for (int rankedIndex: moveSpeedRanking){
-      int totalDamage = characters[rankedIndex].getStatTrueValue("Base Power")
+      int rawDamage = characters[rankedIndex].getStatTrueValue("Base Power")
         + moves[rankedIndex].getStatTrueValue("Move Power");
+      int trueDamage = characters[1 - rankedIndex].calculateTrueDamage(rawDamage);
       
       System.out.printf("%s uses %s, it does %d damage!\n",
           characters[rankedIndex].getName(),
           moves[rankedIndex].getName(),
-          totalDamage
+          trueDamage
           );
 
-      states[1 - rankedIndex].takeDamage(totalDamage);
+      states[1 - rankedIndex].takeDamage(trueDamage);
 
       int winner = determineWinner(states);
 
