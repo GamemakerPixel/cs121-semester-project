@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Sorting{
-  public static final int ARRAY_LENGTH = 5;
+  public static final int DEFAULT_ARRAY_LENGTH = 5;
 
   private static final Scanner SCANNER = new Scanner(System.in);
 
   public static int[] getArray(){
-    int[] array = new int[ARRAY_LENGTH];
+    return getArray(DEFAULT_ARRAY_LENGTH);
+  }
+
+  public static int[] getArray(int arrayLength){
+    int[] array = new int[arrayLength];
 
     for (int i = 0; i < array.length; i++){
       System.out.println("Enter a number:");
@@ -26,9 +30,18 @@ public class Sorting{
     for (int element: array){ list.add(element); }
 
     list = sortList(list);
-    return list.toArray(new int[0]);
+
+    int[] sortedArray = new int[array.length];
+
+    // There is a built-in method to do this, but it only works for objects, not primatives.
+    for (int elementIndex = 0; elementIndex < sortedArray.length; elementIndex++){
+      sortedArray[elementIndex] = list.get(elementIndex);
+    }
+
+    return sortedArray;
   }
 
+  // Sorting with lists makes more sense for merge sort.
   public static ArrayList<Integer> sortList(ArrayList<Integer> list){
     // Base case, already sorted.
     if (list.size() <= 1){
@@ -37,8 +50,8 @@ public class Sorting{
 
     int splitIndex = list.size() / 2;
 
-    ArrayList<Integer> leftList = list.subList(0, splitIndex);
-    ArrayList<Integer> rightList = list.subList(splitIndex, list.size());
+    ArrayList<Integer> leftList = new ArrayList<>(list.subList(0, splitIndex));
+    ArrayList<Integer> rightList = new ArrayList<>(list.subList(splitIndex, list.size()));
 
     ArrayList<Integer> sortedList = mergeLists(sortList(leftList), sortList(rightList));
 
@@ -49,7 +62,7 @@ public class Sorting{
     ArrayList<Integer> mergedList = new ArrayList<>(listA.size() + listB.size());
 
     while(listA.size() > 0 && listB.size() > 0){
-      shrinkingList = (listA.get(0) <= listB.get(0)) ? listA : listB;
+      ArrayList<Integer> shrinkingList = (listA.get(0) <= listB.get(0)) ? listA : listB;
 
       mergedList.add(shrinkingList.remove(0));
     }
