@@ -34,7 +34,7 @@ public class UserBooking{
     return userName;
   }
 
-  public void displayUserBooking{
+  public void displayUserBooking(){
     System.out.println("Booking:");
     for (String theater: theaterList){
       System.out.println(theater);

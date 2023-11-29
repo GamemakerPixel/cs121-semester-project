@@ -8,7 +8,7 @@ public class Main{
         60*60*1, "Adventure", "A movie about three turtles exploring everywhere.",
         "Scute Showings");
     UserBooking bookingB = new UserBooking("Bert", "Turtles in the Sticks",
-        60*60*1, "Reality", "What happens when three turtles are placed on an island, " +
+        60*60*2, "Reality", "What happens when three turtles are placed on an island, " +
         "without anything to aid their survival?",
         "Freshwater Theater");
 
@@ -18,6 +18,18 @@ public class Main{
 
     bookingB.addTheater("Saltwater Showings");
     bookingB.addTheater("Crystal Cove Theater");
-    bookingB.addTheater(":")
+    bookingB.addTheater("Turtle Shell Cove");
+
+    System.out.println(bookingA.getUserInfo());
+    System.out.println(bookingB.getUserInfo());
+
+    bookingA.displayUserBooking();
+    bookingB.displayUserBooking();
+
+    bookingA.removeTheater("Sandy Showings");
+    bookingB.removeTheater("Saltwater Showings");
+
+    bookingA.displayUserBooking();
+    bookingB.displayUserBooking();
   }
 }
