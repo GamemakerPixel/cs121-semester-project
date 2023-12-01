@@ -1,0 +1,40 @@
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 2e49032c02164f933a141ab2043aadd9c20711a3
+Flying Turtles are Cool!
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 75318fd7c7241e7f50c912a0e7ba5943edeb10cd
+100644 blob 2e49032c02164f933a141ab2043aadd9c20711a3	turtles.txt
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 854ec6699f11d3554e581fa895fea069484dfe64
+tree 75318fd7c7241e7f50c912a0e7ba5943edeb10cd
+author Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701322783 -0500
+committer Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701322783 -0500
+
+Turtlesss
+
+---------
+
+[aidan@edge-of-arch example-git-repo]$ cat .git/refs/heads/master
+330d8155b879b1f610d9caab9d48f8e04134cb75
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 330d8155b879b1f610d9caab9d48f8e04134cb75
+tree 66e6b841370fa646072776ea996daf754270d48c
+parent 854ec6699f11d3554e581fa895fea069484dfe64
+author Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701323568 -0500
+committer Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701323568 -0500
+
+Giraffes are maybe cool idk
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 854ec6699f11d3554e581fa895fea069484dfe64
+tree 75318fd7c7241e7f50c912a0e7ba5943edeb10cd
+author Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701322783 -0500
+committer Aidan Bensch <57157106+GamemakerPixel@users.noreply.github.com> 1701322783 -0500
+
+Turtlesss
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 66e6b841370fa646072776ea996daf754270d48c
+100644 blob 99ed0d431c5a19f147da3c4cb8421b5566600449	.gitignore
+040000 tree 27141a69bea34104efa4e46fb5bf91a8c573d6e6	giraffe-dir
+100644 blob 2e49032c02164f933a141ab2043aadd9c20711a3	turtles.txt
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 27141a69bea34104efa4e46fb5bf91a8c573d6e6
+100644 blob 6010475cd4d702fac395c92ad0baefe8cdce3234	giraffes.txt
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 2e49032c02164f933a141ab2043aadd9c20711a3
+Flying Turtles are Cool!
+[aidan@edge-of-arch example-git-repo]$ git cat-file -p 6010475cd4d702fac395c92ad0baefe8cdce3234
+What about giraffes?
+[aidan@edge-of-arch example-git-repo]$ 
+
