@@ -2,6 +2,8 @@ package projectTwo;
 
 import java.util.HashMap;
 import java.io.File;
+import java.function.Consumer;
+
 
 // Inspired by git
 
@@ -9,7 +11,7 @@ public class VersionControl{
   public static final String REPOSITORY_DIRECTORY_NAME = "repository-dir";
   public static final String OBJECT_DIRECTORY_NAME = "objects";
 
-  private static final HashMap<String, Runnable> commands = new HashMap<>();
+  private static final HashMap<String, Consumer<String[]>> commands = new HashMap<>();
 
   private static String workingPath;
   private static String repoPath;
@@ -17,8 +19,9 @@ public class VersionControl{
   private static String objectsPath;
 
   private static void selfInitialize(){
-    commands.put("help", () -> { help(); });
-    commands.put("init", () -> { init(); });
+    commands.put("help", (String[] args) -> { help(); });
+    commands.put("init", (String[] args) -> { init(); });
+    commands.put("store-blob", (String[] args) -> { storeBlob(args[0]); });
 
     setDirectoryPaths();
   }
@@ -29,6 +32,10 @@ public class VersionControl{
 
   public static String getRepoPath(){
     return repoPath;
+  }
+
+  public static String getObjectsPath(){
+    return objectsPath;
   }
 
   public static void main(String[] args) {
@@ -51,7 +58,8 @@ public class VersionControl{
 
   private static void help(){
     System.out.println("Possible Commands: \n" + 
-        "help : Displays this dialog.\n"
+        "help : Displays this dialog.\n" +
+        "init : Initializes a repository in this directory.\n"
         );
   }
 
@@ -68,6 +76,16 @@ public class VersionControl{
 
     repoDirectory.mkdir();
     objectDirectory.mkdir();
+  }
+
+  private static void storeBlob(String filePath){
+
+    try{
+      File file = new File(filePath);
+    }
+    catch (NullPointerException exception){
+      exception.printStackTrace();
+    }
   }
 
   private static void setDirectoryPaths(){
