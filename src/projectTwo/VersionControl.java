@@ -1,8 +1,10 @@
 package projectTwo;
 
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.function.Consumer;
 import java.io.File;
-import java.function.Consumer;
+import java.io.IOException;
 
 
 // Inspired by git
@@ -21,7 +23,7 @@ public class VersionControl{
   private static void selfInitialize(){
     commands.put("help", (String[] args) -> { help(); });
     commands.put("init", (String[] args) -> { init(); });
-    commands.put("store-blob", (String[] args) -> { storeBlob(args[0]); });
+    commands.put("store-blob", (String[] args) -> { storeBlob(args); });
 
     setDirectoryPaths();
   }
@@ -42,24 +44,31 @@ public class VersionControl{
     selfInitialize();
 
     if (args.length == 0){
-      commands.get("help").run();
+      commands.get("help").accept(new String[0]);
       return;
     }
 
-    Runnable commandRunnable = commands.get(args[0]);
+    Consumer<String[]> commandConsumer = commands.get(args[0]);
 
-    if (commandRunnable == null){
-      commands.get("help").run();
+    if (commandConsumer == null){
+      commands.get("help").accept(new String[0]);
       return;
     }
 
-    commandRunnable.run();
+    // If no arguments for command
+    if (args.length <= 1){
+      commandConsumer.accept(new String[0]);
+      return;
+    }
+
+    commandConsumer.accept(Arrays.copyOfRange(args, 1, args.length));
   }
 
   private static void help(){
     System.out.println("Possible Commands: \n" + 
         "help : Displays this dialog.\n" +
-        "init : Initializes a repository in this directory.\n"
+        "init : Initializes a repository in this directory.\n" +
+        "store-blob <file path> : Stores a file's contents as an object.\n"
         );
   }
 
@@ -78,14 +87,34 @@ public class VersionControl{
     objectDirectory.mkdir();
   }
 
-  private static void storeBlob(String filePath){
+  private static void storeBlob(String[] args){
+    String filePath;
+    try{
+      filePath = args[0];
+    }
+    catch (ArrayIndexOutOfBoundsException exception){
+      System.out.println("Must provide a file path.");
+      return;
+    }
+
+    File file;
 
     try{
-      File file = new File(filePath);
+      file = new File(filePath);
     }
     catch (NullPointerException exception){
       exception.printStackTrace();
+      return;
     }
+
+    try{
+      Blob blob = new Blob(file);
+      blob.storeObject();
+    }
+    catch (IOException exception){
+      System.out.println("Invallid file path: " + filePath);
+    }
+    
   }
 
   private static void setDirectoryPaths(){

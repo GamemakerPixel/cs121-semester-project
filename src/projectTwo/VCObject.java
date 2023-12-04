@@ -25,7 +25,18 @@ public abstract class VCObject{
 
     byte[] hashedObject = shaDigest.digest(objectData);
 
-    System.out.println(new String(hashedObject));
+    System.out.println(bytesToHexString(hashedObject));
+    System.out.println("Store at " + objectsPath);
+  }
+
+  protected static String bytesToHexString(byte[] bytes){
+    StringBuilder builder = new StringBuilder();
+
+    for (byte b: bytes){
+      builder.append(String.format("%02x", b));
+    }
+
+    return builder.toString();
   }
 
   private static void initializeDigest(){
