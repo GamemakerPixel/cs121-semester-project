@@ -149,8 +149,8 @@ public class VersionControl{
     }
 
     try{
-      Blob blob = new Blob(directory);
-      blob.storeObject();
+      Tree tree = new Tree(directory);
+      tree.storeObject();
     }
     catch (IOException exception){
       System.out.println("Invallid directory path: " + directoryPath);
