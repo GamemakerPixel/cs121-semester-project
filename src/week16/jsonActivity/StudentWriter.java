@@ -1,8 +1,9 @@
 package week16.jsonActivity;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import com.google.code.gson.Gson;
+import com.google.gson.Gson;
 
 public class StudentWriter{
   public static void main(String[] args) {
@@ -11,9 +12,12 @@ public class StudentWriter{
     Gson gson = new Gson();
 
     try{
-      FileWriter writer = new FileWriter("student.json");
+      File directory = new File("data/week16/jsonActivity");
+      directory.mkdirs();
 
-      String jsonString = gson.toGson(student);
+      FileWriter writer = new FileWriter("data/week16/jsonActivity/student.json");
+
+      String jsonString = gson.toJson(student);
 
       writer.write(jsonString);
       writer.close();
