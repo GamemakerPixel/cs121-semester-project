@@ -15,8 +15,8 @@ public class Blob extends VCObject{
     this.fileContents = Files.readAllBytes(file.toPath());
   }
 
-  public void storeObject(){
-    storeObjectData(fileContents);
+  public String storeObject(){
+    return storeObjectData(fileContents);
   }
 
 

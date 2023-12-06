@@ -12,7 +12,8 @@ public abstract class VCObject{
 
   private static MessageDigest shaDigest;
 
-  public abstract void storeObject();
+  // Returns the hexidecimal hash of the stored object
+  public abstract String storeObject();
 
   /*
   public static String readObject(String objectHash){
@@ -20,21 +21,21 @@ public abstract class VCObject{
   }*/
 
   // objectString is the data contained in this VCObject
-  protected static boolean storeObjectData(byte[] objectData){
+  protected static String storeObjectData(byte[] objectData){
     initializeDigest();
 
     String objectsPath = VersionControl.getObjectsPath();
 
     if (objectsPath == null){ 
       System.out.println("Repository not yet initialized!");
-      return false;
+      return "";
     }
 
     byte[] hashedObject = shaDigest.digest(objectData);
 
     String hexString = bytesToHexString(hashedObject);
 
-    if (objectPreviouslyStored(objectsPath, hexString)){ return false; }
+    if (objectPreviouslyStored(objectsPath, hexString)){ return hexString; }
 
     // Technically, separating these objects with directories is unnessesary since this program is
     // likely only going to be run on ext4, btrfs, ntfs, and apfs, as opposed to fat-32, which has a
@@ -57,7 +58,7 @@ public abstract class VCObject{
       exception.printStackTrace();
     }
 
-    return true;
+    return hexString;
   }
 
   protected static boolean objectPreviouslyStored(String objectsPath, String objectHash){

@@ -24,6 +24,7 @@ public class VersionControl{
     commands.put("help", (String[] args) -> { help(); });
     commands.put("init", (String[] args) -> { init(); });
     commands.put("store-blob", (String[] args) -> { storeBlob(args); });
+    commands.put("store-tree", (String[] args) -> { storeTree(args); });
 
     setDirectoryPaths();
   }
@@ -68,7 +69,8 @@ public class VersionControl{
     System.out.println("Possible Commands: \n" + 
         "help : Displays this dialog.\n" +
         "init : Initializes a repository in this directory.\n" +
-        "store-blob <file path> : Stores a file's contents as an object.\n"
+        "store-blob <file path> : Stores a file's contents as an object.\n" +
+        "store-tree <directory path> : Stores a directory and pointers to it's children in an object.\n"
         );
   }
 
@@ -107,6 +109,11 @@ public class VersionControl{
       return;
     }
 
+    if (file.isDirectory()){
+      System.out.println(filePath + " is a directory, must be stored as a tree.");
+      return;
+    }
+
     try{
       Blob blob = new Blob(file);
       blob.storeObject();
@@ -114,7 +121,40 @@ public class VersionControl{
     catch (IOException exception){
       System.out.println("Invallid file path: " + filePath);
     }
-    
+  }
+
+  private static void storeTree(String[] args){
+    String directoryPath;
+    try{
+      directoryPath = args[0];
+    }
+    catch (ArrayIndexOutOfBoundsException exception){
+      System.out.println("Must provide a directory path.");
+      return;
+    }
+
+    File directory;
+
+    try{
+      directory = new File(directoryPath);
+    }
+    catch (NullPointerException exception){
+      exception.printStackTrace();
+      return;
+    }
+
+    if (directory.isFile()){
+      System.out.println(directoryPath + " is a file, must be stored as a blob.");
+      return;
+    }
+
+    try{
+      Blob blob = new Blob(directory);
+      blob.storeObject();
+    }
+    catch (IOException exception){
+      System.out.println("Invallid directory path: " + directoryPath);
+    }
   }
 
   private static void setDirectoryPaths(){
