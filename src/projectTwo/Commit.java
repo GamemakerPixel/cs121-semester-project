@@ -1,6 +1,10 @@
 package projectTwo;
 
+import java.util.Scanner;
+import java.util.HashMap;
+import java.io.File;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class Commit extends VCObject{
   private String commitContents = "";
@@ -22,11 +26,39 @@ public class Commit extends VCObject{
       commitContents += String.format("author %s\n", author);
     }
     if (message != null){
-      message += String.format("message %s\n", message);
+      commitContents += String.format("message %s\n", message);
     }
   }
 
   public String storeObject(){
     return storeObjectData(commitContents.getBytes());
+  }
+
+  public static HashMap<String, String> parseCommit(File commit){
+    HashMap<String, String> parsedCommit = new HashMap<>();
+
+    parsedCommit.put("tree", null);
+    parsedCommit.put("parent", null);
+    parsedCommit.put("author", null);
+    parsedCommit.put("message", null);
+
+    try{
+      Scanner scanner = new Scanner(commit);
+      
+      while (scanner.hasNextLine()){
+        String line = scanner.nextLine();
+        int spaceIndex = line.indexOf(" ");
+        if (spaceIndex == -1){ continue; }
+        String label = line.substring(0, spaceIndex);
+        String contents = line.substring(spaceIndex + 1);
+
+        parsedCommit.put(label, contents);
+      }
+    }
+    catch (FileNotFoundException exception){
+      exception.printStackTrace();
+    }
+
+    return parsedCommit;
   }
 }

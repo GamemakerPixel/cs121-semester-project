@@ -19,5 +19,14 @@ public class Blob extends VCObject{
     return storeObjectData(fileContents);
   }
 
+  public static byte[] parseBlob(File blob){
+    try{
+      return Files.readAllBytes(blob.toPath());
+    }
+    catch (IOException exception){
+      exception.printStackTrace();
+      return new byte[0];
+    }
+  }
 
 }

@@ -1,9 +1,11 @@
 package projectTwo;
 
+import java.util.Scanner;
 import java.util.HashMap;
 import java.io.File;
 import java.nio.file.Files;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class Tree extends VCObject{
   private File directory;
@@ -59,5 +61,29 @@ public class Tree extends VCObject{
     }
 
     return childHashes;
+  }
+
+  public static HashMap<String, String[]> parseTree(File tree){
+    HashMap<String, String[]> parsedTree = new HashMap<>();
+
+    try{
+      Scanner scanner = new Scanner(tree);
+
+      while(scanner.hasNextLine()){
+        String line = scanner.nextLine();
+        int firstSpaceIndex = line.indexOf(" ");
+        int secondSpaceIndex = line.indexOf(" ", firstSpaceIndex + 1);
+        String type = line.substring(0, firstSpaceIndex);
+        String hash = line.substring(firstSpaceIndex + 1, secondSpaceIndex);
+        String name = line.substring(secondSpaceIndex + 1);
+
+        parsedTree.put(hash, new String[] {name, type});
+      }
+    }
+    catch (FileNotFoundException exception){
+      exception.printStackTrace();
+    }
+
+    return parsedTree;
   }
 }
